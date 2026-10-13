@@ -115,13 +115,12 @@
 </script>
 
 
-<!-- Event snippet for Purchase conversion page
-In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+<!-- Google Ads conversion tracking for lead actions -->
 <script>
 function gtag_report_conversion(url) {
   var callback = function () {
     if (typeof(url) != 'undefined') {
-      window.location = url;
+      window.location.href = url;
     }
   };
   gtag('event', 'conversion', {
@@ -129,11 +128,46 @@ function gtag_report_conversion(url) {
       'value': 1.0,
       'currency': 'INR',
       'transaction_id': '',
-      'event_callback': callback
+      'event_callback': callback,
+      'event_timeout': 2000
       // 'new_customer': true /* calculate dynamically, populate with true/false */,
   });
   return false;
 }
+
+document.addEventListener('click', function (event) {
+  if (
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey
+  ) {
+    return;
+  }
+
+  var target = event.target;
+  var link = target instanceof Element ? target.closest('a[href]') : null;
+  if (!link || link.hasAttribute('download')) return;
+
+  var protocol = link.protocol.toLowerCase();
+  var isLeadAction =
+    protocol === 'tel:' ||
+    protocol === 'mailto:' ||
+    link.hostname.toLowerCase() === 'wa.me' ||
+    link.hostname.toLowerCase() === 'api.whatsapp.com';
+
+  if (!isLeadAction) return;
+
+  if (link.target.toLowerCase() === '_blank') {
+    gtag_report_conversion();
+    return;
+  }
+
+  event.preventDefault();
+  gtag_report_conversion(link.href);
+});
 </script>
   </head>
 
