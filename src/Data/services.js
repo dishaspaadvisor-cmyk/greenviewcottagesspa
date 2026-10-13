@@ -124,15 +124,7 @@ const serviceList = [
     features: ["Ladies spa experience", "Relaxation"],
     image: "service18.jpg",
   },
-  {
-    slug: "female-to-male-massage",
-    name: "Female to Male Massage",
-    duration: "90",
-    description:
-      "A professional massage session provided by a female therapist to a male client.",
-    features: ["Female therapist", "Professional massage"],
-    image: "service14.jpg",
-  },
+ 
   {
     slug: "full-body-massage-scrub",
     name: "Full Body Massage + Scrub",
