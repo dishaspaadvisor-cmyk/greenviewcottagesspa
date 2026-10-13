@@ -5,12 +5,12 @@ import aboutData from "../Data/About";
 const heroSlides = [
   {
     image: "/uploads/heroImages/hero1.jpg",
-    heading: "Your Spa Escape in Mount Abu",
+    heading: "No 1 spa in Mount Abu",
     text: "Relax and unwind at Green View Cottages & Spa.",
   },
   {
     image: "/uploads/heroImages/hero4.webp",
-    heading: "Relaxation Surrounded by Nature",
+    heading: "Best spa in Mount Abu",
     text: "Discover spa services in the peaceful hills of Mount Abu.",
   },
   {
@@ -20,7 +20,7 @@ const heroSlides = [
   },
   {
     image: "/uploads/heroImages/hero2.jpg",
-    heading: "Take a Break. Find Your Calm.",
+    heading: "Best spa services in Mount Abu",
     text: "Visit Green View Cottages & Spa in Dhundai, Mount Abu.",
   },
 ];
