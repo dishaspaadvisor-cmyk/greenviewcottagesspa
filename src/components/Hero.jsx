@@ -3,27 +3,28 @@ import { FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
 import aboutData from "../Data/About";
 
 const heroSlides = [
-  {
-    image: "/uploads/heroImages/hero1.jpg",
-    heading: "No 1 spa in Mount Abu",
-    text: "Relax and unwind at Green View Cottages & Spa.",
-  },
-  {
-    image: "/uploads/heroImages/hero4.webp",
-    heading: "Best spa in Mount Abu",
-    text: "Discover spa services in the peaceful hills of Mount Abu.",
-  },
-  {
-    image: "/uploads/heroImages/hero3.webp",
-    heading: "Spa & Cottage Stays in Mount Abu",
-    text: "Enjoy a refreshing spa visit or a peaceful cottage getaway.",
-  },
-  {
-    image: "/uploads/heroImages/hero2.jpg",
-    heading: "Best spa services in Mount Abu",
-    text: "Visit Green View Cottages & Spa in Dhundai, Mount Abu.",
-  },
+{
+image: "/uploads/heroImages/hero1.jpeg",
+heading: "Experience the Best Spa in Mount Abu",
+text: "Relax, rejuvenate, and refresh yourself with soothing spa therapies amidst the peaceful hills of Mount Abu.",
+},
+{
+image: "/uploads/heroImages/hero4.webp",
+heading: "No 1 Spa in Mount Abu",
+text: "Escape from your daily routine and enjoy a relaxing spa experience in a serene and refreshing atmosphere.",
+},
+{
+image: "/uploads/heroImages/hero3.webp",
+heading: "Luxury Spa in Mount Abu",
+text: "Make your Mount Abu holiday special with comfortable cottage stays, rejuvenating spa treatments, and warm hospitality.",
+},
+{
+image: "/uploads/heroImages/hero2.jpeg",
+heading: "Discover Peace & Relaxation in Mount Abu",
+text: "Visit Green View Cottages & Spa in Dhundai, Mount Abu, and enjoy the perfect blend of comfort, nature, and wellness.",
+},
 ];
+
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);

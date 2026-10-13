@@ -11,12 +11,12 @@ const about = {
   description:
     "Green View Cottages & Spa is in Dhundai, Mount Abu, Rajasthan. We offer spa services and cottage stays. Contact us to ask about treatments, accommodation, prices, and availability for your visit.",
   image: [
-    "/uploads/services/service1.jpg",
-    "/uploads/services/service5.jpg",
-    "/uploads/services/service3.jpg",
-    "/uploads/services/service4.jpg",
-    "/uploads/services/service16.jpg",
-    "/uploads/services/service7.jpg",
+    "/uploads/services/service1.jpeg",
+    "/uploads/services/service5.jpeg",
+    "/uploads/services/service3.jpeg",
+    "/uploads/services/service4.jpeg",
+    "/uploads/services/service16.jpeg",
+    "/uploads/services/service7.jpeg",
   ],
   imageDescription:
     "Spa Services and Peaceful Cottage Stays in Mount Abu",

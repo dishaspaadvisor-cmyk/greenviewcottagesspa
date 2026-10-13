@@ -1,154 +1,188 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { FaPhoneAlt, FaWhatsapp, FaTimes, FaLeaf } from "react-icons/fa";
+import { FaPhoneAlt, FaWhatsapp, FaTimes } from "react-icons/fa";
 
 const popupdata = {
-  title: "Green View Cottages & Spa",
-  description:
-    "Planning a relaxing spa visit or a peaceful cottage stay in Mount Abu?",
+  image: "/uploads/services/popup.png", // Your image path
   phone: "+918976854196",
   whatsapp: "https://wa.me/918976854199",
 };
 
-const SESSION_KEY = "green-view-enquiry-popup-seen";
+const SESSION_KEY = "green-view-spa-offer-seen";
+const TIMER_DURATION = 5 * 60 * 1000;
 
 const Popup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [remaining, setRemaining] = useState(300);
+
   const dialogRef = useRef(null);
-  const closeButtonRef = useRef(null);
+  const closeRef = useRef(null);
+  const deadlineRef = useRef(null);
   const titleId = useId();
-  const descriptionId = useId();
 
   useEffect(() => {
     try {
       if (sessionStorage.getItem(SESSION_KEY)) return;
     } catch {
-      // Continue when browser storage is unavailable.
+      // Storage may be unavailable.
     }
 
-    const timer = window.setTimeout(() => {
+    const timeout = window.setTimeout(() => {
+      deadlineRef.current = Date.now() + TIMER_DURATION;
+      setRemaining(300);
+      setIsOpen(true);
+
       try {
         sessionStorage.setItem(SESSION_KEY, "true");
       } catch {
-        // The popup still works without browser storage.
+        // Continue without storage.
       }
+    }, 15000);
 
-      setIsOpen(true);
-    }, 30000);
-
-    return () => window.clearTimeout(timer);
+    return () => window.clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
     if (!isOpen) return;
 
     const dialog = dialogRef.current;
-    if (!dialog) return;
-
     const previousFocus = document.activeElement;
     const previousOverflow = document.body.style.overflow;
-    const previousScrollY = window.scrollY;
+
+    if (!dialog) return;
 
     document.body.style.overflow = "hidden";
-    dialog.showModal();
-    closeButtonRef.current?.focus({ preventScroll: true });
+    if (!dialog.open) dialog.showModal();
+    closeRef.current?.focus({ preventScroll: true });
+
+    const updateTimer = () => {
+      const seconds = Math.max(
+        0,
+        Math.ceil((deadlineRef.current - Date.now()) / 1000)
+      );
+
+      setRemaining(seconds);
+      return seconds;
+    };
+
+    updateTimer();
+
+    const interval = window.setInterval(() => {
+      if (updateTimer() === 0) window.clearInterval(interval);
+    }, 1000);
 
     return () => {
+      window.clearInterval(interval);
       dialog.close();
       document.body.style.overflow = previousOverflow;
 
       if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
         previousFocus.focus({ preventScroll: true });
       }
-
-      window.scrollTo({ top: previousScrollY, behavior: "auto" });
     };
   }, [isOpen]);
 
-  const closeModal = () => setIsOpen(false);
+  const expired = remaining === 0;
+  const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const seconds = String(remaining % 60).padStart(2, "0");
 
-  const whatsappMessage = encodeURIComponent(
-    "Hello Green View Cottages & Spa! I would like to enquire about spa services or a cottage stay in Mount Abu."
+  const message = encodeURIComponent(
+    expired
+      ? "Hello! Please share current spa prices and availability at Green View Cottages & Spa."
+      : "Hello! I am interested in your 25% spa discount and services starting from ₹1,499. Please share offer details and availability."
   );
 
   return (
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}
-      aria-describedby={descriptionId}
-      onKeyDown={(event) => {
-        if (event.key === "Escape") {
-          event.preventDefault();
-          closeModal();
-        }
-      }}
       onCancel={(event) => {
         event.preventDefault();
-        closeModal();
+        setIsOpen(false);
       }}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) closeModal();
-      }}
-      className="fixed inset-0 m-auto max-h-[90svh] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-3xl border-0 bg-[#F7F5EF] p-0 text-[#29372B] shadow-2xl backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+      className="fixed inset-0 m-auto max-h-[90svh] w-[calc(100%_-_2rem)] max-w-[340px] overflow-y-auto rounded-2xl border-0 bg-[#FFFDF8] p-0 text-[#29372B] shadow-2xl backdrop:bg-black/55"
     >
-      <div className="relative p-6 sm:p-8">
-        <button
-          ref={closeButtonRef}
-          type="button"
-          onClick={closeModal}
-          aria-label="Close enquiry popup"
-          className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-[#62685E] transition-colors hover:bg-[#5C7057]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5C7057]"
-        >
-          <FaTimes aria-hidden="true" size={18} />
-        </button>
+      
+{/* Full image without cropping */}
+<div className="relative overflow-hidden bg-[#E7EBDD]">
+  <img
+    src={popupdata.image}
+    alt="Green View Cottages & Spa offer"
+    className="block max-h-[25svh] w-full object-cover"
+  />
 
-        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#5C7057]/10">
-          <FaLeaf aria-hidden="true" className="text-2xl text-[#5C7057]" />
-        </div>
+  <button
+    ref={closeRef}
+    type="button"
+    onClick={() => setIsOpen(false)}
+    aria-label="Close offer"
+    className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+  >
+    <FaTimes aria-hidden="true" size={15} />
+  </button>
+</div>
 
-        <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-[#5C7057]">
-          Nature · Spa · Stay
+      <div className="px-5 pb-5 pt-4 text-center">
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#5C7057]">
+          Green View Cottages & Spa
         </p>
 
-        <h2
-          id={titleId}
-          className="mb-4 text-center font-serif text-3xl leading-tight"
-        >
-          {popupdata.title}
+        <h2 id={titleId} className="font-serif text-2xl leading-tight">
+          {expired ? "Your moment of relaxation" : "A little break, just for you"}
         </h2>
 
-        <p
-          id={descriptionId}
-          className="mb-6 text-center text-sm leading-7 text-[#62685E]"
-        >
-          {popupdata.description}
-        </p>
+        {!expired && (
+          <div className="my-4 flex items-center justify-center gap-5">
+            <div>
+              <p className="text-3xl font-bold text-[#5C7057]">25% OFF</p>
+              <p className="mt-1 text-xs text-[#62685E]">Special spa offer</p>
+            </div>
 
-        <div className="space-y-3">
+            <div className="h-10 w-px bg-[#5C7057]/20" />
+
+            <div>
+              <p className="text-[11px] text-[#62685E]">Starting from</p>
+              <p className="text-3xl font-bold">₹1,499</p>
+            </div>
+          </div>
+        )}
+
+        {/* Compact countdown */}
+        <div className="my-4 flex items-center justify-center gap-3 rounded-lg bg-[#5C7057]/10 px-3 py-2.5">
+          <span className="text-xs font-medium text-[#465642]">
+            {expired ? "Offer timer ended" : "Offer countdown"}
+          </span>
+          <span
+            role="timer"
+            aria-label={`${minutes} minutes ${seconds} seconds remaining`}
+            className="text-lg font-bold tabular-nums text-[#29372B]"
+          >
+            {minutes}:{seconds}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
           <a
             href={`tel:${popupdata.phone}`}
-            className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-xl bg-[#5C7057] px-5 py-3.5 font-semibold text-white transition-colors hover:bg-[#465642] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#5C7057]"
+            className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#5C7057] px-2 py-3 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5C7057]"
           >
             <FaPhoneAlt aria-hidden="true" />
             Call Now
           </a>
 
           <a
-            href={`${popupdata.whatsapp}?text=${whatsappMessage}`}
+            href={`${popupdata.whatsapp}?text=${message}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-[52px] w-full items-center justify-center gap-3 rounded-xl border border-[#5C7057] px-5 py-3.5 font-semibold text-[#465642] transition-colors hover:bg-[#5C7057]/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#5C7057]"
+            className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-[#5C7057] px-2 py-3 text-sm font-semibold text-[#465642] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5C7057]"
           >
-            <FaWhatsapp aria-hidden="true" className="text-xl" />
-            WhatsApp Us
+            <FaWhatsapp aria-hidden="true" size={18} />
+            WhatsApp
           </a>
         </div>
 
-        <div className="mt-6 border-t border-[#5C7057]/15 pt-5 text-center">
-          <p className="text-sm font-semibold">Dhundai, Mount Abu</p>
-          <p className="mt-2 text-xs leading-6 text-[#62685E]">
-            Contact us for current prices, spa timings, and availability.
-          </p>
-        </div>
+        <p className="mt-3 text-[11px] leading-5 text-[#62685E]">
+          Dhundai, Mount Abu · Enquire for offer details.
+        </p>
       </div>
     </dialog>
   );
